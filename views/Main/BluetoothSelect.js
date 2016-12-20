@@ -113,7 +113,11 @@ export default class BluetoothSelect extends Component {
         <Header searchBar style={{ width: windowWidth }}>
           <InputGroup>
             <Icon name="ios-search" />
-            <Input placeholder="Filter" value={this.state.filter} onChangeText={text => this.setState({ filter: text.toUpperCase() })} />
+            <Input
+              placeholder={this.state.devices.length > 2 ? `Filter ${this.state.devices.length} peripherals` : ''}
+              value={this.state.filter}
+              onChangeText={text => this.setState({ filter: text.toUpperCase() })}
+            />
             <Icon name="md-bluetooth" />
           </InputGroup>
           <Button transparent>
