@@ -60,9 +60,7 @@ export default class BluetoothSelect extends Component {
 
   componentDidMount() {
     checkAndroidPermission();
-
     BleManager.start({ showAlert: false });
-
     NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
   }
 
@@ -130,7 +128,7 @@ export default class BluetoothSelect extends Component {
             {filter(this.state.devices, item => this.testName(item.name, item.id)).map((device, index) => (
               <ListItem
                 key={`${device.id}_${index}`}
-                onPress={() => { connectPeripheral(device.id); this.context.router.transitionTo('/detail'); }}
+                onPress={() => { connectPeripheral(device.name, device.id, this.context.router); }}
                 summary={device.name}
                 description={device.id}
               />
