@@ -4,7 +4,6 @@ import { setGlobalHandler } from 'ErrorUtils'; /* eslint import/no-extraneous-de
 import React, { Component, PropTypes } from 'react';
 import {
   StyleSheet,
-  BackAndroid,
   Text,
   View,
 } from 'react-native';
@@ -49,24 +48,6 @@ const componentFactory = (routeName: string) => () => (
   </View>
 );
 
-class BackAndroidWrapper extends Component {
-  static contextTypes = { router: PropTypes.object };
-  static propTypes = { children: PropTypes.node };
-  componentWillMount() {
-    BackAndroid.addEventListener('hardwareBackPress', () => {
-      this.context.router.transitionTo('/');
-      return true;
-    });
-  }
-  render() {
-    return (
-      <View>
-        {this.props.children}
-      </View>
-    );
-  }
-}
-
 
 export default class Route extends Component {
   render() {
@@ -74,13 +55,11 @@ export default class Route extends Component {
       <View style={styles.container}>
         <Provider store={reduxStore}>
           <Router>
-            <BackAndroidWrapper >
-              <View >
-                <Match exactly pattern="/" component={() => <BluetoothSelect />} />
-                <Match pattern="/detail" component={() => <PeripheralDetail />} />
-                <Miss component={componentFactory('Nope, nothing here')} />
-              </View>
-            </BackAndroidWrapper>
+            <View>
+              <Match exactly pattern="/" component={() => <BluetoothSelect />} />
+              <Match pattern="/detail" component={() => <PeripheralDetail />} />
+              <Miss component={componentFactory('Nope, nothing here')} />
+            </View>
           </Router>
         </Provider>
       </View>
