@@ -7,6 +7,7 @@ Read from buletooth and display data.
 Mainly Using:
 
 - react-native
+- react-native-ble-manager
 - react-router
 - redux
 - native-base
