@@ -29,7 +29,7 @@ export function peripheralReducer(state = peripheralInitialState, action) {
 
   switch (action.type) {
     case 'SET_PERIPHERAL_INFO':
-      return state.setIn(['data'], action.payload); // 然后更新 Redux
+      return state.setIn(['data'], action.payload);
     case 'DISCONNECT_CURRENT_PERIPHERAL':
       BleManager.disconnect(state.getIn(['data']).id)
         .then(() => {

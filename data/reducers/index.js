@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 
-import { authReducer, authInitialState } from './auth';
+import { presistReducer, presistInitialState } from './presist';
 import { peripheralReducer, peripheralInitialState } from './peripheral';
 import { viewReducer, viewInitialState } from './view';
 
 import apolloClient from '../apolloClient';
 
 export const rootReducer = combineReducers({
-  auth: authReducer,
+  presist: presistReducer,
   peripheral: peripheralReducer,
   view: viewReducer,
   apollo: apolloClient.reducer(),
@@ -15,7 +15,7 @@ export const rootReducer = combineReducers({
 
 export function getInitialState() {
   const initState = {
-    auth: authInitialState,
+    presist: presistInitialState,
     peripheral: peripheralInitialState,
     view: viewInitialState,
   };
