@@ -6,12 +6,12 @@ import { setPeripheralInfo } from '../data/reducers/peripheral';
 
 
 export default function connectPeripheral(peripheralId) {
-  BleManager.connect(peripheralId)
-  .then((peripheralInfo) => {
-    Snackbar.show('Connected');
-    store.dispatch(setPeripheralInfo(peripheralInfo));
-  })
-  .catch((error) => {
-    Snackbar.show(error);
-  });
+  return BleManager.connect(peripheralId)
+    .then((peripheralInfo) => {
+      Snackbar.show('Connected');
+      store.dispatch(setPeripheralInfo(peripheralInfo));
+    })
+    .catch((error) => {
+      Snackbar.show(error);
+    });
 }

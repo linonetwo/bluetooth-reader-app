@@ -1,4 +1,6 @@
+import Promise from 'bluebird';
 import { filter } from 'lodash';
+
 import { autobind } from 'core-decorators';
 
 import React, { Component, PropTypes } from 'react';
@@ -78,7 +80,26 @@ export default class BluetoothSelect extends Component {
   }
 
   @autobind
+  stopDiscoveringAndJump() {
+    return Promise.try(() =>
+      this.setState({ discovering: false })
+    )
+    .then(() =>
+      BleManager.stopScan()
+    )
+    .then(() =>
+      Promise.delay(1000) // 避免 update unmounted 的组件
+    )
+    .then(() => {
+      this.context.router.transitionTo('/detail');
+    });
+  }
+
+  @autobind
   handleDiscoverPeripheral(data) {
+    if (!this.state.discovering) {
+      return;
+    }
     const knownDevices = this.state.devices;
     const deviceIds = knownDevices.map(d => d.id);
     if (data) {
@@ -128,7 +149,7 @@ export default class BluetoothSelect extends Component {
             {filter(this.state.devices, item => this.testName(item.name, item.id)).map((device, index) => (
               <ListItem
                 key={`${device.id}_${index}`}
-                onPress={() => { connectPeripheral(device.id); this.context.router.transitionTo('/detail'); }}
+                onPress={() => { connectPeripheral(device.id).then(this.stopDiscoveringAndJump); }}
                 summary={device.name}
                 description={device.id}
               />
