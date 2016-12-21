@@ -31,10 +31,11 @@ export function peripheralReducer(state = peripheralInitialState, action) {
     case 'SET_PERIPHERAL_INFO':
       return state.setIn(['data'], action.payload); // 然后更新 Redux
     case 'DISCONNECT_CURRENT_PERIPHERAL':
-      BleManager.disconnect(state.getIn(['data', 'id']))
+      BleManager.disconnect(state.getIn(['data']).id)
         .then(() => {
-          Snackbar.show(`Disconnected from ${this.props.id}`);
-        });
+          Snackbar.show(`Disconnected from ${state.getIn(['data']).id}`);
+        })
+        .catch(error => Snackbar.show(error));
       return peripheralInitialState;
 
     default:

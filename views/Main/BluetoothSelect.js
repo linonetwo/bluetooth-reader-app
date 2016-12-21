@@ -1,6 +1,8 @@
 import Promise from 'bluebird';
 import { filter } from 'lodash';
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 
 import React, { Component, PropTypes } from 'react';
@@ -9,8 +11,7 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  Switch,
+  RefreshControl,
   Dimensions,
   NativeAppEventEmitter,
 } from 'react-native';
@@ -28,6 +29,8 @@ import { ListItem } from '../components/List';
 
 import checkAndroidPermission from '../../utils/checkAndroidPermission';
 import connectPeripheral from '../../utils/connectPeripheral';
+
+import { setLoading, setNotLoading } from '../../data/reducers/view';
 
 global.Buffer = Buffer;
 
@@ -51,8 +54,24 @@ const styles = StyleSheet.create({
   },
 });
 
+function mapStateToProps(state) {
+  return {
+    loading: state.view.getIn(['loading']),
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ setLoading, setNotLoading }, dispatch);
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class BluetoothSelect extends Component {
   static contextTypes = { router: PropTypes.object };
+  static propTypes = {
+    loading: PropTypes.bool.isRequired,
+    setLoading: PropTypes.func.isRequired,
+    setNotLoading: PropTypes.func.isRequired,
+  };
 
   state = {
     discovering: false,
@@ -81,16 +100,15 @@ export default class BluetoothSelect extends Component {
 
   @autobind
   stopDiscoveringAndJump() {
-    return Promise.try(() =>
-      this.setState({ discovering: false })
-    )
-    .then(() =>
-      BleManager.stopScan()
-    )
+    return Promise.try(() => {
+      this.setState({ discovering: false });
+    })
+    .then(BleManager.stopScan)
     .then(() =>
       Promise.delay(1000) // 避免 update unmounted 的组件
     )
     .then(() => {
+      this.props.setNotLoading();
       this.context.router.transitionTo('/detail');
     });
   }
@@ -144,17 +162,28 @@ export default class BluetoothSelect extends Component {
           </Button>
         </Header>
         <Content>
-          <Text style={{ alignSelf: 'center' }}>Bluetooth devices</Text>
-          <View style={styles.listContainer}>
-            {filter(this.state.devices, item => this.testName(item.name, item.id)).map((device, index) => (
-              <ListItem
-                key={`${device.id}_${index}`}
-                onPress={() => { connectPeripheral(device.id).then(this.stopDiscoveringAndJump); }}
-                summary={device.name}
-                description={device.id}
-              />
-              ))}
-          </View>
+          <RefreshControl
+            refreshing={this.props.loading}
+            colors={['#ff0000', '#00ff00', '#0000ff', '#123456']}
+            progressBackgroundColor={'#ffffff'}
+          >
+            <Text style={{ alignSelf: 'center' }}>Bluetooth devices</Text>
+            <View style={styles.listContainer}>
+              {filter(this.state.devices, item => this.testName(item.name, item.id)).map((device, index) => (
+                <ListItem
+                  key={`${device.id}_${index}`}
+                  onPress={() => Promise.try(this.props.setLoading)
+                    .then(() => connectPeripheral(device.id))
+                    .then(this.stopDiscoveringAndJump)
+                    .catch((error) => { this.props.setNotLoading(); Snackbar.show(error); })
+                  }
+                  disabled={this.props.loading}
+                  summary={device.name}
+                  description={device.id}
+                />
+                ))}
+            </View>
+          </RefreshControl>
         </Content>
         <Footer>
           <FooterTab>

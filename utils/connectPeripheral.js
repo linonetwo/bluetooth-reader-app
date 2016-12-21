@@ -10,8 +10,5 @@ export default function connectPeripheral(peripheralId) {
     .then((peripheralInfo) => {
       Snackbar.show('Connected');
       store.dispatch(setPeripheralInfo(peripheralInfo));
-    })
-    .catch((error) => {
-      Snackbar.show(error);
     });
 }
