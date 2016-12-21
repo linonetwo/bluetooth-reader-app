@@ -73,11 +73,6 @@ export default class PeripheralDetail extends Component {
   }
 
   render() {
-    const navigationView = (
-      <View style={{ flex: 1, backgroundColor: '#fff' }}>
-        <Text style={{ margin: 10, fontSize: 15, textAlign: 'left' }}>I'm in the Drawer!</Text>
-      </View>
-    );
     return (
       <Container>
         <Header style={{ width: windowWidth }}>
@@ -89,7 +84,6 @@ export default class PeripheralDetail extends Component {
             <Icon name="md-document" />
           </Button>
         </Header>
-
         <Content>
           <List
             dataArray={this.props.characteristics}

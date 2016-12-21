@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import BleManager from 'react-native-ble-manager';
 import Snackbar from 'react-native-android-snackbar';
 
-import { TouchableOpacity, Text, View, Dimensions, BackAndroid, StyleSheet } from 'react-native';
-import { Container, Header, Title, InputGroup, Input, Icon, Content, Footer, FooterTab, Button } from 'native-base';
+import { TouchableOpacity, View, Dimensions, BackAndroid, StyleSheet } from 'react-native';
+import { Container, Header, Title, Text, InputGroup, Input, Icon, Content, Footer, FooterTab, Button } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import { LineChart } from 'react-native-mp-android-chart';
@@ -47,24 +47,32 @@ export default class PeripheralDetail extends Component {
     }
   }
 
+  state = {
+    data: '',
+    openLineChart: false,
+  }
+
   componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', this.handleBack);
-    // const channelData1 = BleManager.read(
-    //   this.props.info.id,
-    //   this.props.info.service,
-    //   this.props.info.characteristic
-    // )
-    //   .then((readData) => {
-    //     console.warn(readData);
-    //   })
-    //   .catch((error) => {
-    //     console.warn(JSON.stringify(error, null, '  '));
-    //   });
   }
 
   handleBack() {
     this.context.router.transitionTo('/services');
     return true;
+  }
+
+  readData() {
+    BleManager.read(
+      this.props.info.id,
+      this.props.info.service,
+      this.props.info.characteristic
+    )
+      .then((data) => {
+        this.setState({ data });
+      })
+      .catch((error) => {
+        this.setState({ data: JSON.stringify(error, null, '  ') });
+      });
   }
 
 
@@ -93,19 +101,33 @@ export default class PeripheralDetail extends Component {
           <Title>{this.props.info.characteristic}</Title>
         </Header>
         <Content>
-          <LineChart
-            style={styles.chart}
-            data={lineChartData}
-            description={{ text: '' }}
+          <Text>{this.state.data}</Text>
+          {
+          this.state.openLineChart
+          ?
+            <LineChart
+              style={styles.chart}
+              data={lineChartData}
+              description={{ text: '' }}
 
-            drawGridBackground={false}
-            borderColor={'teal'}
-            borderWidth={1}
-            drawBorders={true}
+              drawGridBackground={false}
+              borderColor={'teal'}
+              borderWidth={1}
+              drawBorders={true}
 
-            keepPositionOnRotation={false}
-          />
+              keepPositionOnRotation={false}
+            />
+          : <View />
+        }
+
         </Content>
+        <Footer>
+          <FooterTab>
+            <Button onPress={this.readData} transparent>
+              Read Data
+            </Button>
+          </FooterTab>
+        </Footer>
       </Container>
     );
   }
