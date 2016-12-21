@@ -19,11 +19,12 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
+  const data = state.peripheral.getIn(['data']);
   return {
-    data: state.peripheral.getIn(['data']),
-    name: state.peripheral.getIn(['data']).name,
-    id: state.peripheral.getIn(['data']).id,
-    characteristics: state.peripheral.getIn(['data']).characteristics,
+    data,
+    name: data.name,
+    id: data.id,
+    characteristics: data.characteristics,
   };
 }
 
