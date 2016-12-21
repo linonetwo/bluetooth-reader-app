@@ -65,6 +65,11 @@ export default class PeripheralDetail extends Component {
     return true;
   }
 
+  handleSelect(info) {
+    setCurrentCharacteristic(info);
+    this.context.router.transitionTo('/detail');
+  }
+
   render() {
     const navigationView = (
       <View style={{ flex: 1, backgroundColor: '#fff' }}>

@@ -16,7 +16,8 @@ import reduxStore from '../data/reduxStore';
 
 import NavLink from './components/NavLink';
 import BluetoothSelect from './Main/BluetoothSelect';
-import PeripheralDetail from './Main/PeripheralDetail';
+import PeripheralServices from './Main/PeripheralServices';
+import DisplayDetail from './Main/DisplayDetail';
 
 // 防止闪退
 setGlobalHandler((err) => console.warn(err)); // eslint-disable-line
@@ -57,7 +58,8 @@ export default class Route extends Component {
           <Router>
             <View>
               <Match exactly pattern="/" component={() => <BluetoothSelect />} />
-              <Match pattern="/detail" component={() => <PeripheralDetail />} />
+              <Match pattern="/services" component={() => <PeripheralServices />} />
+              <Match pattern="/detail" component={() => <DisplayDetail />} />
               <Miss component={componentFactory('Nope, nothing here')} />
             </View>
           </Router>

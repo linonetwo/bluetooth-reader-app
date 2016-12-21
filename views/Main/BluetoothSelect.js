@@ -112,7 +112,7 @@ export default class BluetoothSelect extends Component {
     )
     .then(() => {
       this.props.setNotLoading();
-      this.context.router.transitionTo('/detail');
+      this.context.router.transitionTo('/services');
     });
   }
 
