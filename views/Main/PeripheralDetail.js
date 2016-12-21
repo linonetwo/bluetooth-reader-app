@@ -67,8 +67,8 @@ export default class PeripheralDetail extends Component {
 
   render() {
     const navigationView = (
-      <View style={{flex: 1, backgroundColor: '#fff'}}>
-        <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>I'm in the Drawer!</Text>
+      <View style={{ flex: 1, backgroundColor: '#fff' }}>
+        <Text style={{ margin: 10, fontSize: 15, textAlign: 'left' }}>I'm in the Drawer!</Text>
       </View>
     );
     return (
@@ -78,8 +78,8 @@ export default class PeripheralDetail extends Component {
             <Icon name="ios-arrow-back" />
           </Button>
           <Title>{this.props.name}</Title>
-          <Button transparent>
-            <Icon name="ios-menu" />
+          <Button onPress={() => this.setState({ showDetail: !this.state.showDetail })} transparent>
+            <Icon name="md-document" />
           </Button>
         </Header>
 
