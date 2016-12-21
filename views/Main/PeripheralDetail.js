@@ -7,18 +7,23 @@ import { connect } from 'react-redux';
 import BleManager from 'react-native-ble-manager';
 import Snackbar from 'react-native-android-snackbar';
 
-import { TouchableOpacity, Text, View, Dimensions, BackAndroid, StyleSheet } from 'react-native';
-import { Container, Header, Title, InputGroup, Input, Icon, Content, Footer, FooterTab, Button } from 'native-base';
+import { TouchableOpacity, View, Dimensions, BackAndroid, StyleSheet } from 'react-native';
+import { Container, Header, Title, InputGroup, List, ListItem, Text, Input, Icon, Content, Footer, FooterTab, Button } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
-import { LineChart } from 'react-native-mp-android-chart';
-
 import { disconnectCurrentPeripheral } from '../../data/reducers/peripheral';
+import { setCurrentCharacteristic } from '../../data/reducers/view';
 
-const colorSwatches = ['#F44336', '#03A9F4', '#E91E63', '#9C27B0', '#00BCD4', '#673AB7', '#3F51B5', '#2196F3', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#607D8B', '#000000'];
 const { width: windowWidth } = Dimensions.get('window');
-const styles = StyleSheet.create({
 
+const drawerStyles = {
+  shadowColor: '#000',
+  shadowOpacity: 0.8,
+  shadowRadius: 3,
+  backgroundColor: '#000',
+};
+
+const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
@@ -32,7 +37,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ disconnectCurrentPeripheral }, dispatch);
+  return bindActionCreators({ disconnectCurrentPeripheral, setCurrentCharacteristic }, dispatch);
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -44,64 +49,60 @@ export default class PeripheralDetail extends Component {
     id: PropTypes.string,
   };
 
+  state = {
+    showDetail: false,
+  }
+
   componentDidMount() {
-    BackAndroid.addEventListener('hardwareBackPress', () => {
-      this.context.router.transitionTo('/');
-      this.props.disconnectCurrentPeripheral();
-      return true;
-    });
-    const channelData1 = BleManager.read(
-      this.props.id,
-      this.props.characteristics[8].service,
-      this.props.characteristics[8].characteristic
-    )
-      .then((readData) => {
-        console.warn(readData);
-      })
-      .catch((error) => {
-        console.warn(JSON.stringify(error, null, '  '));
-      });
+    BackAndroid.addEventListener('hardwareBackPress', this.handleBack);
+  }
+
+  @autobind
+  handleBack() {
+    this.context.router.transitionTo('/');
+    this.props.disconnectCurrentPeripheral();
+    BackAndroid.addEventListener('hardwareBackPress', () => true);
+    return true;
   }
 
   render() {
-    const lineChartData = {
-      datasets: [].map(({ source, lineChart }, index) => ({
-        yValues: lineChart.map(({ value }) => Number(value)),
-        label: source,
-        config: {
-          lineWidth: 3,
-          drawCubic: true,
-          drawCubicIntensity: 0.1,
-          circleRadius: 0,
-          drawHighlightIndicators: true,
-          color: colorSwatches[index % colorSwatches.length],
-        },
-      })),
-      xValues: [],
-    };
+    const navigationView = (
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>I'm in the Drawer!</Text>
+      </View>
+    );
     return (
       <Container>
         <Header style={{ width: windowWidth }}>
+          <Button onPress={this.handleBack} transparent>
+            <Icon name="ios-arrow-back" />
+          </Button>
           <Title>{this.props.name}</Title>
+          <Button transparent>
+            <Icon name="ios-menu" />
+          </Button>
         </Header>
+
         <Content>
-          <LineChart
-            style={styles.chart}
-            data={lineChartData}
-            description={{ text: '' }}
-
-            drawGridBackground={false}
-            borderColor={'teal'}
-            borderWidth={1}
-            drawBorders={true}
-
-            keepPositionOnRotation={false}
-          />
-          <Text style={styles.summary}>
-            {
-              JSON.stringify(this.props.data, null, '  ')
+          <List
+            dataArray={this.props.characteristics}
+            renderRow={item =>
+              <ListItem>
+                <Text >
+                  service: {item.service}
+                </Text>
+                <Text note>
+                  characteristic: {item.characteristic}
+                </Text>
+              </ListItem>
             }
-          </Text>
+          />
+
+          {
+            this.state.showDetail
+            ? <Text style={styles.summary}>{JSON.stringify(this.props.data, null, '  ')}</Text>
+            : <View />
+          }
         </Content>
       </Container>
     );

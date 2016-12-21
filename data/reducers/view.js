@@ -12,8 +12,16 @@ export function setNotLoading() {
   };
 }
 
+export function setCurrentCharacteristic(info) {
+  return {
+    type: 'SET_CURRENT_CHARACTERISTIC',
+    payload: info,
+  };
+}
+
 const InitialState = Record({
   loading: false,
+  currentCharacteristic: null,
 });
 
 
@@ -27,6 +35,8 @@ export function viewReducer(state = viewInitialState, action) {
       return state.setIn(['loading'], true);
     case 'SET_NOT_LOADING':
       return state.setIn(['loading'], false);
+    case 'SET_CURRENT_CHARACTERISTIC':
+      return state.setIn(['currentCharacteristic'], action.payload);
 
     default:
       return state;
