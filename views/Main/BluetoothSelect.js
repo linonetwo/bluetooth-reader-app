@@ -77,6 +77,7 @@ export default class BluetoothSelect extends Component {
     discovering: false,
     devices: [],
     filter: '',
+    scanTimeSecond: 30,
   }
 
   componentDidMount() {
@@ -87,15 +88,14 @@ export default class BluetoothSelect extends Component {
 
   @autobind
   discoverUnpaired() {
-    const scanTimeSecond = 30;
     if (this.state.discovering) {
       return false;
     }
-    this.setState({ discovering: true });
-    BleManager.scan([], scanTimeSecond, true)
-    .then(() => {
-      setTimeout(() => this.setState({ discovering: false }), scanTimeSecond * 1000);
-    });
+
+    BleManager.scan([], this.state.scanTimeSecond, true)
+      .then(() => {
+        this.setState({ discovering: true });
+      });
   }
 
   @autobind
