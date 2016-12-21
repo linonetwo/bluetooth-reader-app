@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 
+import store from 'react-native-simple-store';
+
 import { Container, Header, Title, InputGroup, Input, Icon, Content, Footer, FooterTab, Button } from 'native-base';
 
 import { Buffer } from 'buffer';
@@ -84,6 +86,8 @@ export default class BluetoothSelect extends Component {
     checkAndroidPermission();
     BleManager.start({ showAlert: false });
     NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
+    store.get('PERIPHERAL')
+      .then(peripheralInfo => peripheralInfo ? this.setState({ devices: [peripheralInfo] }) : null);
   }
 
   @autobind

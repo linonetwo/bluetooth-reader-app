@@ -6,9 +6,6 @@ import apolloClient from './apolloClient';
 
 import { rootReducer, getInitialState } from './reducers';
 
-import { authInitialState } from './reducers/auth';
-
-
 function configureStore(initialState) {
   const enhancer = compose(
   //   devTools({
