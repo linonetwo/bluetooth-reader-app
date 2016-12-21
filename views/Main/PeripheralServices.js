@@ -1,4 +1,6 @@
 /* @flow */
+import Promise from 'bluebird';
+
 import React, { Component, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { bindActionCreators } from 'redux';
@@ -46,6 +48,7 @@ export default class PeripheralDetail extends Component {
   static contextTypes = { router: PropTypes.object };
   static propTypes = {
     disconnectCurrentPeripheral: PropTypes.func.isRequired,
+    setCurrentCharacteristic: PropTypes.func.isRequired,
     name: PropTypes.string,
     id: PropTypes.string,
   };
@@ -61,12 +64,11 @@ export default class PeripheralDetail extends Component {
   handleBack() {
     this.context.router.transitionTo('/');
     this.props.disconnectCurrentPeripheral();
-    BackAndroid.addEventListener('hardwareBackPress', () => true);
     return true;
   }
 
   handleSelect(info) {
-    setCurrentCharacteristic(info);
+    this.props.setCurrentCharacteristic(info);
     this.context.router.transitionTo('/detail');
   }
 
@@ -92,7 +94,7 @@ export default class PeripheralDetail extends Component {
           <List
             dataArray={this.props.characteristics}
             renderRow={item =>
-              <ListItem onPress={() => this.setState({ showDetail: !this.state.showDetail })}>
+              <ListItem onPress={() => this.handleSelect({ id: this.props.id, service: item.service, characteristic: item.characteristic })}>
                 <Text >
                   service: {item.service}
                 </Text>

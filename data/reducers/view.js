@@ -21,7 +21,7 @@ export function setCurrentCharacteristic(info) {
 
 const InitialState = Record({
   loading: false,
-  currentCharacteristic: null,
+  currentCharacteristic: undefined,
 });
 
 

@@ -14,6 +14,7 @@ import {
   RefreshControl,
   Dimensions,
   NativeAppEventEmitter,
+  BackAndroid,
 } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 
@@ -84,6 +85,7 @@ export default class BluetoothSelect extends Component {
   }
 
   componentDidMount() {
+    BackAndroid.addEventListener('hardwareBackPress', () => false);
     checkAndroidPermission();
     BleManager.start({ showAlert: false });
     NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);

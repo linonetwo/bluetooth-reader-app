@@ -22,46 +22,51 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  const data = state.peripheral.getIn(['data']);
   return {
-    data,
-    name: data.name,
-    id: data.id,
-    characteristics: data.characteristics,
+    info: state.view.getIn(['currentCharacteristic']),
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ disconnectCurrentPeripheral }, dispatch);
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps)
+@autobind
 export default class PeripheralDetail extends Component {
   static contextTypes = { router: PropTypes.object };
   static propTypes = {
-    disconnectCurrentPeripheral: PropTypes.func.isRequired,
-    name: PropTypes.string,
-    id: PropTypes.string,
+    info: PropTypes.shape({
+      id: PropTypes.string,
+      service: PropTypes.string,
+      characteristic: PropTypes.string,
+    }).isRequired,
   };
 
-  componentDidMount() {
-    BackAndroid.addEventListener('hardwareBackPress', () => {
-      this.context.router.transitionTo('/');
-      this.props.disconnectCurrentPeripheral();
-      return true;
-    });
-    const channelData1 = BleManager.read(
-      this.props.id,
-      this.props.characteristics[8].service,
-      this.props.characteristics[8].characteristic
-    )
-      .then((readData) => {
-        console.warn(readData);
-      })
-      .catch((error) => {
-        console.warn(JSON.stringify(error, null, '  '));
-      });
+  static defaultProps = {
+    info: {
+      id: '',
+      service: '',
+      characteristic: '',
+    }
   }
+
+  componentDidMount() {
+    BackAndroid.addEventListener('hardwareBackPress', this.handleBack);
+    // const channelData1 = BleManager.read(
+    //   this.props.info.id,
+    //   this.props.info.service,
+    //   this.props.info.characteristic
+    // )
+    //   .then((readData) => {
+    //     console.warn(readData);
+    //   })
+    //   .catch((error) => {
+    //     console.warn(JSON.stringify(error, null, '  '));
+    //   });
+  }
+
+  handleBack() {
+    this.context.router.transitionTo('/services');
+    return true;
+  }
+
 
   render() {
     const lineChartData = {
@@ -82,7 +87,10 @@ export default class PeripheralDetail extends Component {
     return (
       <Container>
         <Header style={{ width: windowWidth }}>
-          <Title>{this.props.name}</Title>
+          <Button onPress={this.handleBack} transparent>
+            <Icon name="ios-arrow-back" />
+          </Button>
+          <Title>{this.props.info.characteristic}</Title>
         </Header>
         <Content>
           <LineChart
@@ -97,11 +105,6 @@ export default class PeripheralDetail extends Component {
 
             keepPositionOnRotation={false}
           />
-          <Text style={styles.summary}>
-            {
-              JSON.stringify(this.props.data, null, '  ')
-            }
-          </Text>
         </Content>
       </Container>
     );
