@@ -67,6 +67,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
+@autobind
 export default class BluetoothSelect extends Component {
   static contextTypes = { router: PropTypes.object };
   static propTypes = {
@@ -90,7 +91,6 @@ export default class BluetoothSelect extends Component {
       .then(peripheralInfo => peripheralInfo ? this.setState({ devices: [peripheralInfo] }) : null);
   }
 
-  @autobind
   discoverUnpaired() {
     if (this.state.discovering) {
       return false;
@@ -102,7 +102,6 @@ export default class BluetoothSelect extends Component {
       });
   }
 
-  @autobind
   stopDiscoveringAndJump() {
     return Promise.try(() => {
       this.setState({ discovering: false });
@@ -117,7 +116,6 @@ export default class BluetoothSelect extends Component {
     });
   }
 
-  @autobind
   handleDiscoverPeripheral(data) {
     if (!this.state.discovering) {
       return;
@@ -132,7 +130,6 @@ export default class BluetoothSelect extends Component {
     this.setState({ devices: knownDevices });
   }
 
-  @autobind
   testName(name, id) {
     // 略过默认情况避免开销
     if (this.state.filter === '') {

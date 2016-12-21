@@ -41,6 +41,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
+@autobind
 export default class PeripheralDetail extends Component {
   static contextTypes = { router: PropTypes.object };
   static propTypes = {
@@ -57,7 +58,6 @@ export default class PeripheralDetail extends Component {
     BackAndroid.addEventListener('hardwareBackPress', this.handleBack);
   }
 
-  @autobind
   handleBack() {
     this.context.router.transitionTo('/');
     this.props.disconnectCurrentPeripheral();
@@ -87,7 +87,7 @@ export default class PeripheralDetail extends Component {
           <List
             dataArray={this.props.characteristics}
             renderRow={item =>
-              <ListItem>
+              <ListItem onPress={() => this.setState({ showDetail: !this.state.showDetail })}>
                 <Text >
                   service: {item.service}
                 </Text>
