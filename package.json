@@ -7,8 +7,8 @@
     "test": "jest",
     "storybook": "storybook start -p 7007",
     "test-storybook": "storyshots",
-    "release": "cd android && gradle assembleRelease && npm run cp-win",
-    "release-unix": "cd android && gradle assembleRelease && cp ./android/app/build/outputs/apk/app-release.apk ./bluetoothApp.apk",
+    "release": "cd android && .\\gradlew.bat assembleRelease && npm run cp-win",
+    "release-unix": "cd android && .\\gradle assembleRelease && cp ./android/app/build/outputs/apk/app-release.apk ./bluetoothApp.apk",
     "cp-win": "copy .\\android\\app\\build\\outputs\\apk\\app-release.apk .\\bluetoothApp.apk"
   },
   "dependencies": {
