@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import BleManager from 'react-native-ble-manager';
 import Snackbar from 'react-native-android-snackbar';
 
-import { TouchableOpacity, View, Dimensions, BackAndroid, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Dimensions, BackAndroid, StyleSheet, NativeAppEventEmitter } from 'react-native';
 import { Container, Header, Title, Text, InputGroup, Input, Icon, Content, Footer, FooterTab, Button } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -59,6 +59,26 @@ export default class PeripheralDetail extends Component {
   handleBack() {
     this.context.router.transitionTo('/services');
     return true;
+  }
+
+  subscriptData() {
+    BleManager.startNotification(
+      this.props.info.id,
+      this.props.info.service,
+      this.props.info.characteristic
+    )
+      .then((data) => {
+        this.setState({ data: 'startNotification' });
+      })
+      .catch((error) => {
+        this.setState({ data: JSON.stringify(error, null, '  ') });
+      });
+
+    NativeAppEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', ({ peripheral: peripheralID, characteristic, value }) => {
+      if (peripheralID === this.props.info.id && characteristic === this.props.info.characteristic) {
+        this.setState({ data: value });
+      }
+    });
   }
 
   readData() {
@@ -123,8 +143,8 @@ export default class PeripheralDetail extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={this.readData} transparent>
-              Read Data
+            <Button onPress={this.subscriptData} transparent>
+              Subscript Data
             </Button>
           </FooterTab>
         </Footer>
