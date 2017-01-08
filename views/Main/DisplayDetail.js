@@ -163,7 +163,7 @@ export default class PeripheralDetail extends Component {
         },
       })),
       // need to be limit + 1, or there will be a crash
-      xValues: Array.from(new Array(this.state.dataCacheLimit + 1), (item, index) => index + 1).map(number => number.toString()),
+      xValues: Array.from(new Array(this.state.dataCacheLimit + 2), (item, index) => index + 1).map(number => number.toString()),
     };
     return (
       <Container>

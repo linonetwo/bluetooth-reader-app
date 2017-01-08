@@ -7,7 +7,7 @@ import Snackbar from 'react-native-android-snackbar';
 
 export default function checkAndroidPermission() {
   if (Platform.OS === 'android' && Platform.Version >= 23) {
-    PermissionsAndroid.checkPermission(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
     .then((checkResult) => {
       if (checkResult) {
         return true;
