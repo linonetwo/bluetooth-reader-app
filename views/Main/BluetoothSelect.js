@@ -95,7 +95,10 @@ export default class BluetoothSelect extends Component {
 
   discoverUnpaired() {
     if (this.state.discovering) {
-      return false;
+      return BleManager.stopScan()
+      .then(() => {
+        this.setState({ discovering: false });
+      });
     }
 
     BleManager.scan([], this.state.scanTimeSecond, true)
@@ -110,7 +113,7 @@ export default class BluetoothSelect extends Component {
     })
     .then(BleManager.stopScan)
     .then(() =>
-      Promise.delay(1000) // 避免 update unmounted 的组件
+      Promise.delay(100) // 避免 update unmounted 的组件
     )
     .then(() => {
       this.props.setNotLoading();
