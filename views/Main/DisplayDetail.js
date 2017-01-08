@@ -55,6 +55,7 @@ export default class PeripheralDetail extends Component {
     notifying: false,
     openLineChart: true,
     eventListener: null,
+    currentData: '',
     dataCache: [
       { name: 'ACC_X_L', values: [] },
       { name: 'ACC_X_H', values: [] },
@@ -99,7 +100,7 @@ export default class PeripheralDetail extends Component {
         name, values: [...takeRight(this.state.dataCache[index].values, this.state.dataCacheLimit), datas[index]]
       }));
 
-      this.setState({ dataCache, lastDataUpdateTime: new Date().getTime() });
+      this.setState({ currentData: value, dataCache, lastDataUpdateTime: new Date().getTime() });
     }
   }
 
@@ -177,7 +178,7 @@ export default class PeripheralDetail extends Component {
           </Button>
         </Header>
         <Content>
-          <Text>{''}</Text>
+          <Text>{this.state.currentData}</Text>
           {
             this.state.openLineChart
               ?
